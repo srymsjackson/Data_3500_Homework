@@ -16,13 +16,13 @@ for line in lines:
     prices.append(line)
 
 # These are all declared in order to use for the summary, if/elif loops, etc... 
-#
-#
 # tracking the holding for buying
 holding = False
+
 # For tracking the buy/sell price
 buy_price = None
 sell_price = None
+
 # to present total profit & first buy at the end of the trading period (the summary)
 total_profit = 0.0
 first_buy = None
@@ -31,7 +31,7 @@ for i in range(len(prices) - 4):
     # Declaring the 5 day avg
     five_day_avg = sum(prices[i:i+5]) / 5
 
-    # Declaring the current price to use in the loop fr
+    # Declaring the current price to use in the loop
     current_price = prices[i + 4]
 
     # Decided to make this last min for better readability
