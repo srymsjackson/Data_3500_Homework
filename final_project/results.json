@@ -1,0 +1,94 @@
+{
+  "total_tracks_analyzed": 800,
+  "genres_tracked": [
+    "Pop",
+    "Hip-Hop",
+    "Rock",
+    "Country",
+    "Electronic",
+    "Indie",
+    "Latin",
+    "R&B"
+  ],
+  "most_popular_tracks_genre": "Latin",
+  "least_popular_tracks_genre": "Country",
+  "most_popular_artists_genre": "Pop",
+  "genre_with_most_followers": "Pop",
+  "longest_tracks_genre": "Indie",
+  "most_explicit_genre": "Hip-Hop",
+  "genre_statistics": {
+    "Pop": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 81.44,
+      "avg_artist_popularity": 93.3,
+      "avg_artist_followers": 108257913,
+      "avg_track_duration_sec": 217.8,
+      "explicit_percentage": 26.0
+    },
+    "Hip-Hop": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 81.15,
+      "avg_artist_popularity": 89.8,
+      "avg_artist_followers": 48563257,
+      "avg_track_duration_sec": 240.3,
+      "explicit_percentage": 90.0
+    },
+    "Rock": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 79.76,
+      "avg_artist_popularity": 84.2,
+      "avg_artist_followers": 34757651,
+      "avg_track_duration_sec": 236.5,
+      "explicit_percentage": 2.0
+    },
+    "Country": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 74.14,
+      "avg_artist_popularity": 80.1,
+      "avg_artist_followers": 9782168,
+      "avg_track_duration_sec": 210.6,
+      "explicit_percentage": 6.0
+    },
+    "Electronic": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 74.46,
+      "avg_artist_popularity": 81.9,
+      "avg_artist_followers": 21758328,
+      "avg_track_duration_sec": 204.4,
+      "explicit_percentage": 16.0
+    },
+    "Indie": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 77.45,
+      "avg_artist_popularity": 84.9,
+      "avg_artist_followers": 22474776,
+      "avg_track_duration_sec": 254.8,
+      "explicit_percentage": 20.0
+    },
+    "Latin": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 82.4,
+      "avg_artist_popularity": 89.8,
+      "avg_artist_followers": 53943012,
+      "avg_track_duration_sec": 212.9,
+      "explicit_percentage": 48.0
+    },
+    "R&B": {
+      "tracks_analyzed": 100,
+      "artists_tracked": 5,
+      "avg_track_popularity": 80.33,
+      "avg_artist_popularity": 86.3,
+      "avg_artist_followers": 37602611,
+      "avg_track_duration_sec": 224.3,
+      "explicit_percentage": 66.0
+    }
+  },
+  "last_updated": "2025-12-08 21:29:37"
+}
