@@ -1,5 +1,5 @@
 from dotenv import load_dotenv 
-import os 
+import os
 import base64 
 from requests import post, get 
 import json 
@@ -14,8 +14,9 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET") 
 
 # ==================== AUTHENTICATION ====================
-def get_token(): 
-    """Obtains Spotify API access token"""
+
+# Obtains our Spotify API Access Token
+def get_token():
     auth_string = client_id + ":" + client_secret 
     auth_bytes = auth_string.encode("utf-8") 
     auth_base64 = str(base64.b64encode(auth_bytes), "utf-8") 
@@ -29,15 +30,15 @@ def get_token():
     result = post(url, headers=headers, data=data) 
     json_result = json.loads(result.content) 
     token = json_result["access_token"] 
-    return token 
+    return token
 
-def get_auth_header(token): 
-    """Returns authorization header with token"""
+# Returns authorization header with token
+def get_auth_header(token):
     return {"Authorization": "Bearer " + token} 
 
 # ==================== DATA COLLECTION ====================
 
-# searches for an artist
+# Searches for an artist
 def search_for_artist(token, artist_name):
     url = "https://api.spotify.com/v1/search"
     headers = get_auth_header(token)
@@ -49,42 +50,71 @@ def search_for_artist(token, artist_name):
         return None
     return json_result[0]
 
+# Obtains artist's top 10 tracks
 def get_artist_top_tracks(token, artist_id):
-    """Get top 10 tracks for an artist"""
     url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?market=US"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
     return json_result.get("tracks", [])
 
+# Details on the artist's info
 def get_artist_info(token, artist_id):
-    """Get detailed artist information"""
     url = f"https://api.spotify.com/v1/artists/{artist_id}"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     return json.loads(result.content)
 
-
 # ==================== GENRE ARTISTS ====================
 
 # Popular artists representing each genre
 GENRE_ARTISTS = {
-    "Pop": ["Taylor Swift", "Ariana Grande", "Dua Lipa", "The Weeknd", "Ed Sheeran"],
-    "Hip-Hop": ["Drake", "Kendrick Lamar", "Travis Scott", "J. Cole", "21 Savage"],
-    "Rock": ["Foo Fighters", "Imagine Dragons", "Coldplay", "Arctic Monkeys", "The Killers"],
-    "Country": ["Luke Combs", "Morgan Wallen", "Kane Brown", "Chris Stapleton", "Carrie Underwood"],
-    "Electronic": ["Calvin Harris", "Marshmello", "David Guetta", "Kygo", "Martin Garrix"],
-    "Indie": ["Tame Impala", "Arctic Monkeys", "The 1975", "Lana Del Rey", "Hozier"],
-    "Latin": ["Bad Bunny", "Karol G", "J Balvin", "Shakira", "Peso Pluma"],
-    "R&B": ["SZA", "The Weeknd", "Frank Ocean", "Summer Walker", "Bryson Tiller"]
+    "Pop": [
+        "Taylor Swift", "Ariana Grande", "Dua Lipa", "The Weeknd", "Ed Sheeran",
+        "Billie Eilish", "Justin Bieber", "Rihanna", "Bruno Mars", "Lady Gaga",
+    ],
+    "Hip-Hop": [
+        "Drake", "Kendrick Lamar", "Travis Scott", "J. Cole", "21 Savage",
+        "Post Malone", "Playboi Carti", "Kanye West", "Doja Cat", "Tyler, The Creator"
+    ],
+    "Rock": [
+        "Coldplay", "Imagine Dragons", "The Killers", "Arctic Monkeys", "Foo Fighters",
+        "Linkin Park", "Queen", "The Beatles", "Red Hot Chili Peppers", "Nirvana"
+    ],
+    "Country": [
+        "Morgan Wallen", "Luke Combs", "Chris Stapleton", "Kane Brown", "Carrie Underwood",
+        "Zach Bryan", "Cody Johnson", "HARDY", "Cody Jinks", "Thomas Rhett"
+    ],
+    "Electronic": [
+        "David Guetta", "Calvin Harris", "Marshmello", "Kygo", "Martin Garrix",
+        "The Chainsmokers", "Avicii", "Alan Walker", "Zedd", "Diplo"
+    ],
+    "Indie": [
+        "Lana Del Rey", "Hozier", "The 1975", "Arctic Monkeys", "Tame Impala",
+        "Florence + The Machine", "Lorde", "Mitski", "Phoebe Bridgers", "Mac DeMarco"
+    ],
+    "Latin": [
+        "Bad Bunny", "J Balvin", "Karol G", "Shakira", "Peso Pluma",
+        "Ozuna", "Maluma", "Daddy Yankee", "Anuel AA", "Feid",
+        "Rauw Alejandro", "Rosalía", "Myke Towers", "Justin Quiles", "Sech"
+    ],
+    "R&B": [
+        "The Weeknd", "SZA", "Frank Ocean", "Summer Walker", "Bryson Tiller",
+        "Rihanna", "Doja Cat", "Drake", "H.E.R.", "Jhene Aiko"
+    ]
 }
 
 # ==================== DATA STORAGE ====================
+
+# Directory where this script is located
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Save or append data to CSV file
 def save_to_csv(data, filename="genre_data.csv"):
-    """Save or append data to CSV file"""
-    file_exists = os.path.isfile(filename)
+    filepath = os.path.join(SCRIPT_DIR, filename)
+    file_exists = os.path.isfile(filepath)
     
-    with open(filename, 'a', newline='', encoding='utf-8') as f:
+    with open(filepath, 'a', newline='', encoding='utf-8') as f:  # Use filepath
         fieldnames = ['date', 'genre', 'artist_name', 'artist_followers', 'artist_popularity', 
                      'track_name', 'track_popularity', 'track_duration_ms', 'explicit']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -95,25 +125,28 @@ def save_to_csv(data, filename="genre_data.csv"):
         for row in data:
             writer.writerow(row)
     
-    print(f"✅ Saved {len(data)} tracks to {filename}")
+    print(f"Saved {len(data)} tracks to {filename}")
+
 
 # ==================== MAIN DATA COLLECTION ====================
+
+# Collects popularity data from ALL genre artists
 def collect_genre_data(token):
     """Collect popularity data from all genre artists"""
     all_data = []
     current_date = datetime.now().strftime("%Y-%m-%d")
     
-    print(f"\n🎵 Starting data collection for {current_date}\n")
+    print(f"\nStarting data collection for {current_date}\n")
     
     for genre, artists in GENRE_ARTISTS.items():
-        print(f"📊 Collecting {genre} data...")
+        print("Collecting", genre, " data...")
         
         for artist_name in artists:
             try:
                 # Search for artist
                 artist = search_for_artist(token, artist_name)
                 if not artist:
-                    print(f"  ⚠️  Couldn't find {artist_name}")
+                    print("  (!)  Couldn't find", artist_name)
                     continue
                 
                 artist_id = artist["id"]
@@ -141,36 +174,38 @@ def collect_genre_data(token):
                     }
                     all_data.append(data_row)
                 
-                print(f"  ✓ Got {len(top_tracks)} tracks from {artist_name} (Pop: {artist_popularity}, Followers: {artist_followers:,})")
-                time.sleep(0.3)  # Be nice to API
+                print(f"    Got {len(top_tracks)} tracks from {artist_name} (Pop: {artist_popularity}, Followers: {artist_followers:,})")
+                time.sleep(0.3)  # Makes the API not wanna end itself!
                 
             except Exception as e:
-                print(f"  ✗ Error with {artist_name}: {e}")
+                print(f"  ERROR with {artist_name}: {e}")
                 continue
         
-        print(f"  ✅ Finished {genre}\n")
+        print("  :) Finished", genre, "\n")
     
     return all_data
 
 # ==================== ANALYSIS ====================
+
+# Analyze popularity trends from collected data
 def analyze_genre_trends(filename="genre_data.csv"):
-    """Analyze popularity trends from collected data"""
-    if not os.path.isfile(filename):
-        print("❌ No data file found. Run data collection first!")
+    filepath = os.path.join(SCRIPT_DIR, filename)
+    if not os.path.isfile(filepath):
+        print("(X) No data file found. Run data collection first!")
         return None
     
     # Read all data
     data = []
-    with open(filename, 'r', encoding='utf-8') as f:
+    with open(filepath, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             data.append(row)
     
     if len(data) == 0:
-        print("❌ No data in CSV file!")
+        print("(X) No data in CSV file!")
         return None
     
-    print(f"\n📈 Analyzing {len(data)} total tracks...\n")
+    print(f"\n  Analyzing {len(data)} total tracks...\n")
     
     # Group by genre
     genre_stats = {}
@@ -195,11 +230,13 @@ def analyze_genre_trends(filename="genre_data.csv"):
         
         stats = genre_stats[genre]
         stats['track_count'] += 1
+
         # Handle both possible column names
         track_pop = row.get('track_popularity') or row.get('popularity', 0)
         stats['total_track_popularity'] += int(track_pop)
         stats['total_artist_popularity'] += int(row['artist_popularity'])
         stats['total_artist_followers'] += int(row['artist_followers'])
+
         # Handle both possible duration column names
         duration = row.get('track_duration_ms') or row.get('duration_ms', 0)
         stats['total_duration'] += int(duration)
@@ -245,27 +282,28 @@ def analyze_genre_trends(filename="genre_data.csv"):
     
     return analysis_summary
 
+# Saves our analysis to the results.json file:
 def save_results_json(results, filename="results.json"):
-    """Save analysis results to JSON file"""
-    with open(filename, 'w', encoding='utf-8') as f:
+    filepath = os.path.join(SCRIPT_DIR, filename)
+    with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2)
-    print(f"\n✅ Results saved to {filename}")
+    print(f"\n  Results saved to {filename}")
 
+# Prints the results "prettier":
 def print_results(results):
-    """Pretty print the results"""
     print("\n" + "="*70)
-    print("🎵 GENRE POPULARITY TRACKER - RESULTS")
+    print("  GENRE POPULARITY TRACKER - RESULTS")
     print("="*70)
-    print(f"\n📊 Total Tracks Analyzed: {results['total_tracks_analyzed']}")
-    print(f"🎸 Genres Tracked: {', '.join(results['genres_tracked'])}")
-    print(f"\n🏆 HIGHLIGHTS:")
-    print(f"  🔥 Most Popular Tracks: {results['most_popular_tracks_genre']}")
-    print(f"  🌟 Most Popular Artists: {results['most_popular_artists_genre']}")
-    print(f"  👥 Most Followers: {results['genre_with_most_followers']}")
-    print(f"  ⏱️  Longest Tracks: {results['longest_tracks_genre']}")
-    print(f"  🔞 Most Explicit: {results['most_explicit_genre']}")
+    print(f"\n  Total Tracks Analyzed: {results['total_tracks_analyzed']}")
+    print(f"  Genres Tracked: {', '.join(results['genres_tracked'])}")
+    print(f"\n  HIGHLIGHTS:")
+    print(f"    Most Popular Tracks: {results['most_popular_tracks_genre']}")
+    print(f"    Most Popular Artists: {results['most_popular_artists_genre']}")
+    print(f"    Most Followers: {results['genre_with_most_followers']}")
+    print(f"    Longest Tracks: {results['longest_tracks_genre']}")
+    print(f"    Most Explicit: {results['most_explicit_genre']}")
     
-    print(f"\n📋 DETAILED STATS BY GENRE:")
+    print(f"\n  DETAILED STATS BY GENRE:")
     for genre, stats in results['genre_statistics'].items():
         print(f"\n  {genre}:")
         print(f"    • Track Popularity: {stats['avg_track_popularity']}/100")
@@ -274,24 +312,25 @@ def print_results(results):
         print(f"    • Avg Duration: {stats['avg_track_duration_sec']}s")
         print(f"    • Explicit: {stats['explicit_percentage']}%")
     
-    print(f"\n📅 Last Updated: {results['last_updated']}")
+    print(f"\n (!!)Last Updated: {results['last_updated']}(!!)")
     print("\n" + "="*70 + "\n")
 
 # ==================== MAIN PROGRAM ====================
+
+# Main program execution
 def main():
-    """Main program execution"""
-    print("🎵 SPOTIFY GENRE POPULARITY TRACKER")
+    print("SPOTIFY GENRE POPULARITY TRACKER")
     print("="*70)
     
     # Get token
     token = get_token()
-    print("✅ Authenticated with Spotify API")
+    print("(Authenticated with Spotify API)")
     
     # Collect data
     genre_data = collect_genre_data(token)
     
     if len(genre_data) == 0:
-        print("\n❌ No data collected! Check your internet connection or Spotify API status.")
+        print("\nNo data collected!")
         return
     
     # Save to CSV
@@ -307,8 +346,8 @@ def main():
         # Save to JSON
         save_results_json(results)
         
-        print("✅ All done! Run this script again tomorrow to track trends over time.")
-        print("📈 Your CSV file will grow with each run, showing popularity changes!")
+        print("All done! Run this script again tomorrow to track trends over time.")
+        print("(This CSV file will append w/ each run btw!)")
     
 if __name__ == "__main__":
     main()
